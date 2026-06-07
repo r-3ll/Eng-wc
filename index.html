@@ -1347,7 +1347,6 @@
     <button class="tab-btn active" role="tab" aria-selected="true"  aria-controls="tab-fixtures" data-tab="fixtures">Fixtures</button>
     <button class="tab-btn"        role="tab" aria-selected="false" aria-controls="tab-group"    data-tab="group">Group Table</button>
     <button class="tab-btn"        role="tab" aria-selected="false" aria-controls="tab-route"    data-tab="route">Route to the Final</button>
-    <button class="tab-btn"        role="tab" aria-selected="false" aria-controls="tab-test"     data-tab="test">Test</button>
   </div>
 </nav>
 
@@ -1928,13 +1927,6 @@
   </section>
 </div><!-- /tab-route -->
 
-<!-- ── TEST TAB ── -->
-<div class="tab-panel" id="tab-test" role="tabpanel">
-  <div class="fixtures-section">
-    <p>Test</p>
-  </div>
-</div><!-- /tab-test -->
-
 </div><!-- /tab-panels-wrap -->
 
 <p class="page-caveat">All times correct at time of publication &nbsp;·&nbsp; Free to watch on ITVX &amp; BBC iPlayer</p>
@@ -1983,7 +1975,7 @@
   positionIndicator(true);
 
   // ── Tab switching (shared function) ──
-  const TAB_ORDER = ['fixtures', 'group', 'route', 'test'];
+  const TAB_ORDER = ['fixtures', 'group', 'route'];
   const SLIDE_DURATION = 300;
   let tabSwitching = false;
 
