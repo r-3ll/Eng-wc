@@ -2100,17 +2100,11 @@
 
   async function fetchGroupTable() {
     try {
-      const res = await fetch('https://api.football-data.org/v4/competitions/WC/standings', {
-        headers: { 'X-Auth-Token': '30b5073e3b8f4ce68e55b54d161ceb70' }
-      });
+      const res = await fetch('standings.json');
       if (!res.ok) return;
-      const data = await res.json();
-      const group = data.standings.find(s =>
-        s.type === 'TOTAL' && s.table.some(r => r.team.name === 'England')
-      );
-      if (!group) return;
+      const table = await res.json();
       const tbody = document.querySelector('.group-table tbody');
-      tbody.innerHTML = group.table.map(r => {
+      tbody.innerHTML = table.map(r => {
         const name = r.team.name;
         const flag = GROUP_FLAGS[name] || '🏳️';
         const gd   = r.goalDifference > 0 ? '+' + r.goalDifference : r.goalDifference;
