@@ -1,8 +1,8 @@
 name: Update standings
 
 on:
-  schedule:
-    - cron: '*/5 * * * *'
+  # schedule:
+  #   - cron: '*/5 * * * *'  # re-enable when tournament starts (17 Jun)
   workflow_dispatch:
 
 permissions:
