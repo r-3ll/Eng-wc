@@ -20,12 +20,13 @@ import datetime
 
 # All Group L kickoffs in UTC (ISO 8601).
 # 110-minute window = 90 min game + 20 min buffer for added time / delays.
-# TODO: add Croatia vs Ghana, Croatia vs Panama, Ghana vs Panama
-#       once their kickoff times are confirmed.
 KICKOFFS = [
-    '2026-06-17T20:00:00',  # England vs Croatia
-    '2026-06-23T20:00:00',  # England vs Ghana
-    '2026-06-27T21:00:00',  # England vs Panama
+    '2026-06-17T20:00:00',  # Matchday 1: England vs Croatia  (AT&T Stadium, Dallas)
+    '2026-06-17T23:00:00',  # Matchday 1: Ghana vs Panama     (BMO Field, Toronto)
+    '2026-06-23T20:00:00',  # Matchday 2: England vs Ghana    (Gillette Stadium, Foxborough)
+    '2026-06-23T23:00:00',  # Matchday 2: Croatia vs Panama   (BMO Field, Toronto)
+    '2026-06-27T21:00:00',  # Matchday 3: England vs Panama   (MetLife Stadium, NJ)
+    '2026-06-27T21:00:00',  # Matchday 3: Croatia vs Ghana    (Lincoln Financial Field, Philadelphia)
 ]
 WINDOW = 110 * 60  # seconds
 
