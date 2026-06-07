@@ -2014,6 +2014,7 @@
       newPanel.classList.remove(inClass);
       tabSwitching = false;
       if (target === 'route') animateActiveSteps();
+      if (target === 'group') fetchGroupTable();
     }, SLIDE_DURATION);
   }
 
@@ -2093,6 +2094,42 @@
 
   updateCountdowns();
   setInterval(updateCountdowns, 1000);
+
+  // ── Live group table ──
+  const GROUP_FLAGS = { England:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', Croatia:'🇭🇷', Ghana:'🇬🇭', Panama:'🇵🇦' };
+
+  async function fetchGroupTable() {
+    try {
+      const res = await fetch('https://api.football-data.org/v4/competitions/WC/standings', {
+        headers: { 'X-Auth-Token': '30b5073e3b8f4ce68e55b54d161ceb70' }
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      const group = data.standings.find(s =>
+        s.type === 'TOTAL' && s.table.some(r => r.team.name === 'England')
+      );
+      if (!group) return;
+      const tbody = document.querySelector('.group-table tbody');
+      tbody.innerHTML = group.table.map(r => {
+        const name = r.team.name;
+        const flag = GROUP_FLAGS[name] || '🏳️';
+        const gd   = r.goalDifference > 0 ? '+' + r.goalDifference : r.goalDifference;
+        return `<tr class="gt-row${name === 'England' ? ' gt-row--england' : ''}">
+          <td class="gt-team-cell"><span class="gt-flag" role="img" aria-label="${name}">${flag}</span><span class="gt-team-name">${name}</span></td>
+          <td class="gt-num-col">${r.playedGames}</td>
+          <td class="gt-num-col">${r.won}</td>
+          <td class="gt-num-col">${r.draw}</td>
+          <td class="gt-num-col">${r.lost}</td>
+          <td class="gt-num-col gt-gf-col">${r.goalsFor}</td>
+          <td class="gt-num-col gt-ga-col">${r.goalsAgainst}</td>
+          <td class="gt-num-col">${gd}</td>
+          <td class="gt-num-col gt-pts-col">${r.points}</td>
+        </tr>`;
+      }).join('');
+    } catch (e) { /* silently keep static table */ }
+  }
+
+  fetchGroupTable();
 
   // ── Route step entrance animations ──
   function animateActiveSteps() {
