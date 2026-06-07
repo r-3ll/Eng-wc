@@ -1,0 +1,38 @@
+name: Update standings
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch and save Group L standings
+        run: |
+          curl -sf \
+            -H "X-Auth-Token: ${{ secrets.FOOTBALL_DATA_API_KEY }}" \
+            "https://api.football-data.org/v4/competitions/WC/standings" \
+          | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+group = next(
+  s for s in data['standings']
+  if s['type'] == 'TOTAL' and any(r['team']['name'] == 'England' for r in s['table'])
+)
+print(json.dumps(group['table'], indent=2))
+" > standings.json
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add standings.json
+          git diff --staged --quiet || git commit -m "chore: update standings"
+          git push
