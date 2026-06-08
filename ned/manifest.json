@@ -3,7 +3,7 @@
   "short_name": "Netherlands",
   "description": "Netherlands FIFA World Cup 2026 fixtures and route to the final",
   "start_url": "/Eng-wc/ned/",
-  "scope": "/Eng-wc/ned/",
+  "scope": "/Eng-wc/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#F36C21",
