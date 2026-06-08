@@ -124,7 +124,93 @@
       text-align: center;
       padding: clamp(20px, 4vw, 36px) var(--sp-gutter);
       position: relative;
-      overflow: hidden;
+    }
+
+    /* ── COUNTRY SWITCHER ── */
+    .country-switcher {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 20;
+    }
+
+    .cs-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 9999px;
+      padding: 5px 10px 5px 8px;
+      color: #fff;
+      font-family: var(--f-body);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .cs-btn:hover,
+    .cs-btn[aria-expanded="true"] { background: rgba(255,255,255,0.2); }
+
+    .cs-current-flag { font-size: 14px; line-height: 1; }
+
+    .cs-chevron {
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+      margin-left: 2px;
+    }
+    .cs-btn[aria-expanded="true"] .cs-chevron { transform: rotate(180deg); }
+
+    .cs-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--r-md);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      min-width: 152px;
+      list-style: none;
+      padding: 4px;
+      z-index: 100;
+    }
+
+    .cs-menu.open { display: block; }
+
+    .cs-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-family: var(--f-body);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--c-secondary);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .cs-option:hover { background: #F3F4F6; }
+    .cs-option--active { color: var(--c-primary); cursor: default; }
+    .cs-option--active:hover { background: transparent; }
+
+    .cs-opt-flag { font-size: 16px; line-height: 1; flex-shrink: 0; }
+    .cs-opt-name { flex: 1; }
+    .cs-check { flex-shrink: 0; color: var(--c-primary); }
+    .cs-option:not(.cs-option--active) .cs-check { display: none; }
+
+    .cs-opt-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: inherit;
+      text-decoration: none;
+      width: 100%;
     }
 
     /* Subtle vignette texture for depth */
@@ -1302,6 +1388,32 @@
 
 <!-- ── HERO ── -->
 <section class="hero">
+
+  <div class="country-switcher" id="countrySwitcher">
+    <button class="cs-btn" id="csBtnTrigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Switch country">
+      <span class="cs-current-flag" aria-hidden="true">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+      <span class="cs-current-name">England</span>
+      <svg class="cs-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+        <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <ul class="cs-menu" role="listbox" id="csMenu" aria-label="Select country">
+      <li class="cs-option cs-option--active" role="option" aria-selected="true">
+        <span class="cs-opt-flag" aria-hidden="true">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+        <span class="cs-opt-name">England</span>
+        <svg class="cs-check" width="12" height="9" viewBox="0 0 12 9" fill="none" aria-hidden="true">
+          <path d="M1 4L4.5 7.5L11 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </li>
+      <li class="cs-option" role="option" aria-selected="false">
+        <a class="cs-opt-link" href="/Ned-wc/">
+          <span class="cs-opt-flag" aria-hidden="true">🇳🇱</span>
+          <span class="cs-opt-name">Netherlands</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
   <div class="hero-lockup">
     <div class="badge-wrap">
       <img src="fa_crest_2009.png" alt="The FA crest — Three Lions" class="badge-img">
@@ -2134,6 +2246,32 @@
       setTimeout(() => step.classList.add('visible'), delay + 50);
     });
   }
+
+  // ── Country switcher ──
+  (function() {
+    const switcher = document.getElementById('countrySwitcher');
+    const btn      = document.getElementById('csBtnTrigger');
+    const menu     = document.getElementById('csMenu');
+    if (!switcher) return;
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      menu.classList.toggle('open', !open);
+    });
+    document.addEventListener('click', e => {
+      if (!switcher.contains(e.target)) {
+        btn.setAttribute('aria-expanded', 'false');
+        menu.classList.remove('open');
+      }
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && menu.classList.contains('open')) {
+        btn.setAttribute('aria-expanded', 'false');
+        menu.classList.remove('open');
+        btn.focus();
+      }
+    });
+  })();
 </script>
 
 </body>
