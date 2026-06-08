@@ -12,6 +12,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Netherlands">
   <meta name="theme-color" content="#F36C21">
+  <link rel="preload" href="knvb_crest.png" as="image" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
@@ -161,11 +162,11 @@
 
     .badge-wrap { flex-shrink: 0; }
 
-    .badge-emoji {
-      font-size: clamp(48px, 8vw, 72px);
-      line-height: 1;
+    .badge-img {
+      width: clamp(56px, 8vw, 80px);
+      height: auto;
       display: block;
-      filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,0.45));
     }
 
     .hero-text { text-align: left; }
@@ -577,7 +578,7 @@
 
   <div class="hero-lockup">
     <div class="badge-wrap">
-      <span class="badge-emoji" role="img" aria-label="Netherlands flag">🇳🇱</span>
+      <img src="knvb_crest.png" alt="KNVB crest" class="badge-img">
     </div>
     <div class="hero-text">
       <h1 class="hero-title">NETHERLANDS</h1>
