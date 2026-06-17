@@ -2261,9 +2261,6 @@
     });
   }
 
-  updateCountdowns();
-  setInterval(updateCountdowns, 1000);
-
   // ── Live group table ──
   const GROUP_FLAGS = { England:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', Croatia:'🇭🇷', Ghana:'🇬🇭', Panama:'🇵🇦' };
 
@@ -2370,6 +2367,10 @@
       </li>`;
     }).join('');
   }
+
+  // Start countdowns after live-polling vars/functions are all initialised
+  updateCountdowns();
+  setInterval(updateCountdowns, 1000);
 
   // ── Route step entrance animations ──
   function animateActiveSteps() {
