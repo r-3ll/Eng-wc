@@ -708,6 +708,21 @@
     }
 
     .match-card.is-live .live-panel { display: block; }
+    .match-card.is-done .live-panel { display: block; }
+
+    .ft-badge {
+      display: none;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      padding: 3px 7px;
+      border-radius: 3px;
+    }
+    .match-card.is-done .ft-badge   { display: block; }
+    .match-card.is-done .live-badge { display: none; }
+    .match-card.is-done .live-clock { display: none; }
 
     .live-scoreboard {
       display: flex;
@@ -1533,6 +1548,7 @@
           </div>
           <div class="live-center">
             <span class="live-badge" aria-label="Match is live">● LIVE</span>
+            <span class="ft-badge" aria-label="Full time">FT</span>
             <span class="live-clock" data-live="minute"></span>
           </div>
           <div class="live-team-block">
@@ -1612,6 +1628,7 @@
           </div>
           <div class="live-center">
             <span class="live-badge" aria-label="Match is live">● LIVE</span>
+            <span class="ft-badge" aria-label="Full time">FT</span>
             <span class="live-clock" data-live="minute"></span>
           </div>
           <div class="live-team-block">
@@ -1691,6 +1708,7 @@
           </div>
           <div class="live-center">
             <span class="live-badge" aria-label="Match is live">● LIVE</span>
+            <span class="ft-badge" aria-label="Full time">FT</span>
             <span class="live-clock" data-live="minute"></span>
           </div>
           <div class="live-team-block">
@@ -2247,6 +2265,10 @@
         bar.classList.add('is-done');
         bar.querySelector('.countdown-status').textContent = 'FULL TIME';
         bar.querySelector('.countdown-eyebrow').textContent = '';
+        if (card && !card.classList.contains('is-done')) {
+          card.classList.add('is-done');
+          fetchPastMatch(card);
+        }
       } else {
         const totalSecs = Math.floor(diff / 1000);
         const d = Math.floor(totalSecs / 86400);
@@ -2330,6 +2352,26 @@
       ],
     };
     renderLivePanel(liveMatchCard, mockMatch);
+  }
+
+  async function fetchPastMatch(card) {
+    // PREVIEW BRANCH — mock data keyed by kickoff time
+    const kickoff = card.querySelector('.countdown-bar')?.dataset.kickoff;
+    const mockResults = {
+      '2026-06-17T20:00:00Z': {
+        status: 'FINISHED',
+        homeTeam: { name: 'England' },
+        awayTeam: { name: 'Croatia' },
+        score: { fullTime: { home: 2, away: 1 } },
+        goals: [
+          { minute: 12, team: { name: 'England' }, scorer: { name: 'J. Bellingham' }, type: 'NORMAL' },
+          { minute: 34, team: { name: 'Croatia' }, scorer: { name: 'L. Modrić' },    type: 'NORMAL' },
+          { minute: 41, team: { name: 'England' }, scorer: { name: 'H. Kane' },       type: 'PENALTY' },
+        ],
+      },
+    };
+    const match = mockResults[kickoff];
+    if (match) renderLivePanel(card, match);
   }
 
   function renderLivePanel(card, match) {
