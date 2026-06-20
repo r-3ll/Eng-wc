@@ -1,0 +1,67 @@
+name: Update standings
+
+on:
+  schedule:
+    - cron: '* * * * *'  # every minute — gated by game-window check below
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if a Group L game is live
+        id: check
+        run: |
+          python3 -c "
+import datetime
+
+# All Group L kickoffs in UTC (ISO 8601).
+# 110-minute window = 90 min game + 20 min buffer for added time / delays.
+KICKOFFS = [
+    '2026-06-17T20:00:00',  # Matchday 1: England vs Croatia  (AT&T Stadium, Dallas)
+    '2026-06-17T23:00:00',  # Matchday 1: Ghana vs Panama     (BMO Field, Toronto)
+    '2026-06-23T20:00:00',  # Matchday 2: England vs Ghana    (Gillette Stadium, Foxborough)
+    '2026-06-23T23:00:00',  # Matchday 2: Croatia vs Panama   (BMO Field, Toronto)
+    '2026-06-27T21:00:00',  # Matchday 3: England vs Panama   (MetLife Stadium, NJ)
+    '2026-06-27T21:00:00',  # Matchday 3: Croatia vs Ghana    (Lincoln Financial Field, Philadelphia)
+]
+WINDOW = 110 * 60  # seconds
+
+now = datetime.datetime.utcnow()
+in_window = any(
+    0 <= (now - datetime.datetime.fromisoformat(k)).total_seconds() <= WINDOW
+    for k in KICKOFFS
+)
+print('in_game=true' if in_window else 'in_game=false')
+" >> $GITHUB_OUTPUT
+
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.in_game == 'true'
+
+      - name: Fetch and save Group L standings
+        if: steps.check.outputs.in_game == 'true'
+        run: |
+          curl -sf \
+            -H "X-Auth-Token: ${{ secrets.FOOTBALL_DATA_API_KEY }}" \
+            "https://api.football-data.org/v4/competitions/WC/standings" \
+          | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+group = next(
+  s for s in data['standings']
+  if s['type'] == 'TOTAL' and any(r['team']['name'] == 'England' for r in s['table'])
+)
+print(json.dumps(group['table'], indent=2))
+" > standings.json
+
+      - name: Commit if changed
+        if: steps.check.outputs.in_game == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add standings.json
+          git diff --staged --quiet || git commit -m "chore: update standings"
+          git push
