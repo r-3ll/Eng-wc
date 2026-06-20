@@ -723,6 +723,7 @@
     .match-card.is-done .ft-badge   { display: block; }
     .match-card.is-done .live-badge { display: none; }
     .match-card.is-done .live-clock { display: none; }
+    .match-card.is-done .tv-block   { display: none; }
 
     .live-scoreboard {
       display: flex;
@@ -2357,9 +2358,10 @@
   async function fetchPastMatch(card) {
     const kickoff = card.querySelector('.countdown-bar')?.dataset.kickoff;
     if (!kickoff) return;
+    const date = kickoff.slice(0, 10);
     try {
       const res = await fetch(
-        `https://api.football-data.org/v4/teams/${ENGLAND_ID}/matches?competitions=WC&status=FINISHED`,
+        `https://api.football-data.org/v4/teams/${ENGLAND_ID}/matches?dateFrom=${date}&dateTo=${date}`,
         { headers: { 'X-Auth-Token': FD_API_KEY } }
       );
       if (!res.ok) return;
